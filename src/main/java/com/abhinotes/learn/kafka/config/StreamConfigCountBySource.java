@@ -12,19 +12,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class StreamConfigRouter {
+public class StreamConfigCountBySource {
 
     @Autowired
     StreamsConfigDefault streamsConfigDefault;
 
-    @Bean("paymentRouterApplication")
+    @Bean("countBySourceApplication")
     public StreamsBuilderFactoryBean routerStreamBuilderFactoryBean() {
         Map<String, Object> config = new HashMap<>();
         streamsConfigDefault.setDefaults(config);
         config.put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
-        config.put(StreamsConfig.APPLICATION_ID_CONFIG, "paymentRouter");
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, "paymentRouter-Consumer");
-        config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+        config.put(StreamsConfig.APPLICATION_ID_CONFIG, "countBySource");
+        config.put(ConsumerConfig.GROUP_ID_CONFIG, "countBySource-Consumer");
+        config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
         config.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 5000);
         return new StreamsBuilderFactoryBean(new KafkaStreamsConfiguration(config));

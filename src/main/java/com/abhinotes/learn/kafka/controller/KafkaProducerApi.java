@@ -19,7 +19,7 @@ public class KafkaProducerApi {
     }
 
     @PostMapping("kafka/post/{sendToTopic}")
-    String postMessage(@RequestBody RestMessage restMessage, @PathVariable String sendToTopic) {
+    String postMessage( @RequestBody RestMessage restMessage, @PathVariable String sendToTopic) {
         return kafkaMessageProducer.produce(restMessage,sendToTopic);
     }
 

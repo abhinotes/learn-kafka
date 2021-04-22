@@ -1,6 +1,7 @@
 package com.abhinotes.learn.kafka.service;
 
 import com.abhinotes.learn.kafka.domain.PaymentWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.KStream;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,13 +10,28 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
+@Slf4j
 public class PaymentRouterService {
 
     private static final CharSequence SPACE = " ";
     private final String requestTopic;
     private final String errorTopic;
     private final String routingBaseTopic;
+
+    private static final List<String> VALID_SOURCES = new ArrayList<String>();
+
+    /**
+     * Just for easy reference , Actual implementation can be from database , property files etc
+     */
+    static {
+        VALID_SOURCES.add("Mobile");
+        VALID_SOURCES.add("Swipe");
+        VALID_SOURCES.add("Web");
+    }
 
     @Autowired
     public PaymentRouterService(@Value("${app.stream.router.request-topic}") String requestTopic,
@@ -26,28 +42,27 @@ public class PaymentRouterService {
         this.routingBaseTopic = routingBaseTopic;
     }
 
+
     @Bean("paymentRouterStreamTopology")
     public KStream<String, PaymentWrapper> startRoutingProcessing(@Qualifier("paymentRouterApplication") StreamsBuilder routeBuilder) {
-
-//        final KStream<String, PaymentWrapper> toSquare = builder.stream( requestTopic, Consumed.with(Serdes.String(), ));
-//        toSquare.map((key, value) -> { // do something with each msg, square the values in our case
-//            return KeyValue.pair(key, value * value);
-//        }).to("squared", Produced.with(Serdes.String(), Serdes.Long())); // send downstream to another topic
-
-        final KStream<String,PaymentWrapper> paymentReader = routeBuilder.stream(requestTopic);
+       final KStream<String,PaymentWrapper> paymentReader = routeBuilder.stream(requestTopic);
         paymentReader.to((key, paymentWrapper, recordContext) -> getTopicNameToRoute(paymentWrapper));
 
         return paymentReader;
     }
 
     private String getTopicNameToRoute(PaymentWrapper paymentWrapper) {
+     String toTopic =    routingBaseTopic.concat(paymentWrapper.getSource());
 
-    if(paymentWrapper == null || paymentWrapper.getSource() == null ||
-            paymentWrapper.getSource().contains(SPACE)) {
+        if(VALID_SOURCES.contains(paymentWrapper.getSource())) {
+                log.info("Routing Payment with ref {} to route {} ",
+                        paymentWrapper.getPayment().getTransactionId(), toTopic);
+                return toTopic;
+            }
+
+        log.info("Invalid destination topic to route {} hence routing to Error Topic {}",
+                toTopic, errorTopic);
         return errorTopic;
-    }
-        // You can query database or hit cache to find target Topic basis source identifier.
-        return routingBaseTopic.concat(paymentWrapper.getSource());
     }
 
 }

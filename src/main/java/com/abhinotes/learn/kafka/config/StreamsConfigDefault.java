@@ -11,7 +11,6 @@ import org.springframework.kafka.annotation.KafkaStreamsDefaultConfiguration;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerde;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,21 +44,14 @@ public class StreamsConfigDefault {
         config.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, brokerHosts);
         config.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
         config.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, JsonSerde.class);
-        config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         config.put(StreamsConfig.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, FailOnInvalidTimestamp.class);
+        //config.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 1);
         config.put(StreamsConfig.NUM_STREAM_THREADS_CONFIG, streamThreads);
         config.put(StreamsConfig.REPLICATION_FACTOR_CONFIG, replicationFactor);
         config.put(JsonDeserializer.TRUSTED_PACKAGES, "com.abhinotes.learn.kafka.domain");
+        //Consumer Configs
+        config.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
+
     }
 
-//    private JsonDeserializer<Container> getJsonSerde() {
-//
-//        JsonSerde jsonSerde  = new JsonSerde<>();
-//        jsonSerde.
-//        JsonDeserializer<Container> deserializer = new JsonDeserializer<>(Container.class);
-//        jsonSerde.setRemoveTypeHeaders(false);
-//        jsonSerde.addTrustedPackages("com.abhinotes.learn.kafka.domain");
-//        deserializer.setUseTypeMapperForKey(true);
-//        return deserializer;
-//    }
 }

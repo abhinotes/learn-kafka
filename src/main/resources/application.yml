@@ -2,6 +2,12 @@
 spring.application.name: learn-kafka
 bootstrap-servers: localhost:9092
 
+logging:
+  level:
+    root: ERROR
+    org.springframework.web: ERROR
+    com.abhinotes: DEBUG
+
 app:
   id: payment-streams-apps
   stream:
@@ -9,7 +15,8 @@ app:
       request-topic: payment-request-topic
       error-topic: router-error-topic
       routing-base-topic: paymentFrom
-    thread: 5
+    thread: 1
+    count-topic: payment-source-wise-count
     replication-factor: 1
 
 #spring.kafka.consumer.bootstrap-servers: localhost:9092
