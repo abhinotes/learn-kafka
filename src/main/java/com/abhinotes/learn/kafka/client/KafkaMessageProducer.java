@@ -1,6 +1,7 @@
 package com.abhinotes.learn.kafka.client;
 
-import com.abhinotes.learn.kafka.domain.MyMessage;
+import com.abhinotes.learn.kafka.domain.PaymentWrapper;
+import com.abhinotes.learn.kafka.domain.RestMessage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -16,21 +17,21 @@ import org.springframework.util.concurrent.ListenableFuture;
 @Slf4j
 public class KafkaMessageProducer {
 
-    private final KafkaTemplate<String, MyMessage> kafkaTemplate;
+    private final KafkaTemplate<String, PaymentWrapper> kafkaTemplate;
 
     @Autowired
-    public KafkaMessageProducer(KafkaTemplate<String, MyMessage> kafkaTemplate) {
+    public KafkaMessageProducer(KafkaTemplate<String, PaymentWrapper> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public String produce(MyMessage myMessage, String sendToTopic) {
+    public String produce(RestMessage restMessage, String sendToTopic) {
 
-        ListenableFuture<SendResult<String, MyMessage>> future =
-                kafkaTemplate.send(sendToTopic, myMessage.getMessageKey(), myMessage);
+        ListenableFuture<SendResult<String, PaymentWrapper>> future =
+                kafkaTemplate.send(sendToTopic, restMessage.getKey(), restMessage.getPaymentWrapper());
 
-        future.addCallback(new KafkaSendCallback<String, MyMessage>() {
+        future.addCallback(new KafkaSendCallback<String, PaymentWrapper>() {
             @Override
-            public void onSuccess(SendResult<String, MyMessage> result) {
+            public void onSuccess(SendResult<String, PaymentWrapper> result) {
                 log.info("Success!! \n Message Key {}  \n Timestamp : {} " +
                                 "\n Topic : {} \n Offset : {} \n Partition : {} \n" ,
                         result.getProducerRecord().key(),
@@ -41,7 +42,7 @@ public class KafkaMessageProducer {
             }
             @Override
             public void onFailure(KafkaProducerException ex) {
-                ProducerRecord<String, MyMessage> failed = ex.getFailedProducerRecord();
+                ProducerRecord<String, PaymentWrapper> failed = ex.getFailedProducerRecord();
                 log.error("Error while publishing record : {}" , failed.toString() , ex);
             }
         });

@@ -2,6 +2,16 @@
 spring.application.name: learn-kafka
 bootstrap-servers: localhost:9092
 
+app:
+  id: payment-streams-apps
+  stream:
+    router:
+      request-topic: payment-request-topic
+      error-topic: router-error-topic
+      routing-base-topic: paymentFrom
+    thread: 5
+    replication-factor: 1
+
 #spring.kafka.consumer.bootstrap-servers: localhost:9092
 #spring.kafka.consumer.group-id: group-id
 #spring.kafka.consumer.auto-offset-reset: earliest

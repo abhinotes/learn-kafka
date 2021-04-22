@@ -1,7 +1,7 @@
 package com.abhinotes.learn.kafka.controller;
 
 import com.abhinotes.learn.kafka.client.KafkaMessageProducer;
-import com.abhinotes.learn.kafka.domain.MyMessage;
+import com.abhinotes.learn.kafka.domain.RestMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,8 +19,8 @@ public class KafkaProducerApi {
     }
 
     @PostMapping("kafka/post/{sendToTopic}")
-    String postMessage(@RequestBody MyMessage myMessage, @PathVariable String sendToTopic) {
-        return kafkaMessageProducer.produce(myMessage,sendToTopic);
+    String postMessage(@RequestBody RestMessage restMessage, @PathVariable String sendToTopic) {
+        return kafkaMessageProducer.produce(restMessage,sendToTopic);
     }
 
 }
