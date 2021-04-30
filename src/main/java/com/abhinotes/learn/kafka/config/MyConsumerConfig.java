@@ -11,7 +11,6 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
-import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +29,7 @@ public class MyConsumerConfig {
     public ConsumerFactory<String, PaymentWrapper> consumerFactory(){
         JsonDeserializer<PaymentWrapper> deserializer = new JsonDeserializer<>(PaymentWrapper.class);
         deserializer.setRemoveTypeHeaders(false);
-        deserializer.addTrustedPackages("*");
+        deserializer.addTrustedPackages("com.abhinotes.learn.kafka.domain");
         deserializer.setUseTypeMapperForKey(true);
 
         Map<String, Object> config = new HashMap<>();

@@ -51,7 +51,6 @@ public class StreamsConfigDefault {
         config.put(JsonDeserializer.TRUSTED_PACKAGES, "com.abhinotes.learn.kafka.domain");
         //Consumer Configs
         config.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
-
     }
 
 }
